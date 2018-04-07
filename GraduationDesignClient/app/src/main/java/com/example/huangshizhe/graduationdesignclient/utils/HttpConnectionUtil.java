@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 
 public class HttpConnectionUtil {
 
-    private static final String prefix="http://127.0.0.1:8080/";
+    private static final String prefix="http://192.168.1.11:8080/";
 
     public static boolean isOnline() {
         ConnectivityManager cManager = (ConnectivityManager) MyApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
