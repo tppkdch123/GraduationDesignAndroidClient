@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
+import com.example.huangshizhe.graduationdesignclient.enums.RequestEnum;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +16,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Created by huangshizhe on 2018/3/23.
@@ -21,7 +25,7 @@ import java.nio.charset.Charset;
 
 public class HttpConnectionUtil {
 
-    private static final String prefix="http://192.168.1.11:8080/";
+    private static final String prefix="http://192.168.1.11:8080";
 
     public static boolean isOnline() {
         ConnectivityManager cManager = (ConnectivityManager) MyApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -34,15 +38,26 @@ public class HttpConnectionUtil {
         Toast.makeText(MyApplication.getContext(), "请打开网络", Toast.LENGTH_LONG).show();
         return false;
     }
-
-    public static String getJsonResult(String url){
+  public static String getJsonResult(RequestEnum requestEnum, Map<String,String> params){
+        if(requestEnum.getType().equals("GET")){
+            return getJsonResult(requestEnum.getUrl(),params);
+        }
+        return null;
+  }
+    public static String getJsonResult(String url,Map<String,String> params){
         HttpURLConnection conn=null;
         try {
-            URL myurl=new URL(prefix+url);
+            StringBuilder stringBuilder=new StringBuilder();
+            stringBuilder.append("?");
+            for(Map.Entry entry:params.entrySet()){
+                stringBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+                }
+            URL myurl=new URL(prefix+url+stringBuilder.toString());
             conn=(HttpURLConnection)myurl.openConnection();
             conn.setConnectTimeout(1000);
             conn.setReadTimeout(1000);
             conn.setRequestMethod("GET");
+            conn.setRequestProperty("huangshizhetianxiadiyi",MyApplication.getSSOToken());
             conn.setDoInput(true);
             if(conn.getResponseCode()==HttpURLConnection.HTTP_OK){
                 return getJsonFromConnection(conn);

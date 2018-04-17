@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.example.huangshizhe.graduationdesignclient.utils.HttpConnectionUtil;
 import com.example.huangshizhe.graduationdesignclient.utils.MyApplication;
 
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button button;
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
-            return HttpConnectionUtil.getJsonResult(editText.getText().toString());
+            return HttpConnectionUtil.getJsonResult(editText.getText().toString(),new HashMap<>());
         }
 
         @Override
