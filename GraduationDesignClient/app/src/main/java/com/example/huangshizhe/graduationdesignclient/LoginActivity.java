@@ -1,14 +1,12 @@
 package com.example.huangshizhe.graduationdesignclient;
 
-import android.content.SharedPreferences;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,12 +14,16 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.huangshizhe.graduationdesignclient.enums.RequestEnum;
+import com.example.huangshizhe.graduationdesignclient.utils.CommenUtil;
 import com.example.huangshizhe.graduationdesignclient.utils.HttpConnectionUtil;
 import com.example.huangshizhe.graduationdesignclient.utils.MyApplication;
+import com.fasterxml.jackson.databind.JsonNode;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,36 +31,95 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText password;
 
-    private AutoCompleteTextView verification;
+    private TextInputEditText verification;
 
     private TextInputLayout passwordLayout;
 
     private LinearLayout verLayout;
+
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        email=(AutoCompleteTextView)findViewById(R.id.email);
+        email = (AutoCompleteTextView) findViewById(R.id.email);
 
-        password=(EditText) findViewById(R.id.password);
+        password = (EditText) findViewById(R.id.password);
 
-        verification=(AutoCompleteTextView)findViewById(R.id.verification);
+        verification = (TextInputEditText) findViewById(R.id.verification);
 
-        passwordLayout=(TextInputLayout)findViewById(R.id.password_layout);
+        passwordLayout = (TextInputLayout) findViewById(R.id.password_layout);
 
-        verLayout=(LinearLayout) findViewById(R.id.ver_layout);
+        verLayout = (LinearLayout) findViewById(R.id.ver_layout);
 
-        ((Button)findViewById(R.id.login)).setOnClickListener((v)->loginBypassword());
+        ((Button) findViewById(R.id.login)).setOnClickListener((v) -> new LoginByPassword().execute(true));
+
+        ((Button) findViewById(R.id.button3)).setOnClickListener((v) -> new LoginByPassword().execute(false));
+
+        email.setText(CommenUtil.getEmail(this));
+
+        password.setText(CommenUtil.getPassword(this));
+
+        ((Button) findViewById(R.id.register)).setOnClickListener((v) -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+
     }
 
-    private void loginBypassword(){
-        String emailText=email.getText().toString();
-        String passwordText=password.getText().toString();
-        Map<String,String> params=new HashMap<>();
-        params.put("email",emailText);
-        params.put("password",passwordText);
-        Toast.makeText(MyApplication.getContext(),HttpConnectionUtil.getJsonResult(RequestEnum.LOGIN,params),Toast.LENGTH_LONG).show();
+    class LoginByPassword extends AsyncTask<Boolean, Void, String> {
+
+        @Override
+        protected String doInBackground(Boolean... bs) {
+            CommenUtil.saveEmail(context, email.getText().toString());
+            if (bs[0]) {
+                String verificationText = verification.getText().toString();
+                String emailText = email.getText().toString();
+                String passwordText = password.getText().toString();
+                if (StringUtils.isEmpty(verificationText)) {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("email", emailText);
+                    params.put("password", passwordText);
+                    CommenUtil.savePassword(context, passwordText);
+                    return HttpConnectionUtil.getJsonResult(RequestEnum.LOGIN_PASSWORD, params);
+                } else {
+                    Map<String,String> params=new HashMap<>();
+                    params.put("verificationCode",verificationText);
+                    params.put("email",emailText);
+                    return HttpConnectionUtil.getJsonResult(RequestEnum.LOGIN_VER,params);
+                }
+            } else {
+                String emailText = email.getText().toString();
+                Map<String, String> params = new HashMap<>();
+                params.put("email", emailText);
+                return HttpConnectionUtil.getJsonResult(RequestEnum.SEND_EMAIL, params);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                if(StringUtils.isEmpty(result)){
+                    Toast.makeText(MyApplication.getContext(), "返回结果为空", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                JsonNode jsonNode = CommenUtil.toJsonNode(result);
+                Integer integer = jsonNode.get("status").asInt();
+                if (integer == 0) {
+                    Intent intent = new Intent(LoginActivity.this, IndexActivity.class);
+                    startActivity(intent);
+                    LoginActivity.this.finish();
+                } else {
+                    Toast.makeText(MyApplication.getContext(), jsonNode.get("data").asText(), Toast.LENGTH_LONG).show();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
 }
