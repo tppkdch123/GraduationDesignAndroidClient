@@ -7,6 +7,9 @@ public enum RequestEnum {
     SEND_EMAIL_REGISTER("/api/user/sendRegisterEmail","GET","发送注册验证码"),
     REGISTER("/api/user/register","GET","注册"),
     LOGIN_VER("/api/user/login","GET","验证码登录"),
+    ROOM_CITY("/api/room/city-room","GET","根据城市id查询信息"),
+    ROOM_EXTEND("/api/room/extend","GET","查看room的图片url"),
+    ROOM("/api/room/","GET","room信息"),
     ;
 
     public String getUrl() {

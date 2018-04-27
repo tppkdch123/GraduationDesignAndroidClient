@@ -1,8 +1,11 @@
 package com.example.huangshizhe.graduationdesignclient.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.huangshizhe.graduationdesignclient.enums.RequestEnum;
@@ -29,7 +32,7 @@ import java.util.stream.Stream;
 
 public class HttpConnectionUtil {
 
-    private static final String prefix = "http://192.168.1.7:8080";
+    private static final String prefix = "http://172.27.35.2:8080";
 
     public static boolean isOnline() {
         ConnectivityManager cManager = (ConnectivityManager) MyApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -68,6 +71,7 @@ public class HttpConnectionUtil {
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Cookie","huangshizhetianxiadiyi="+CommenUtil.getCookie());
             conn.setDoInput(true);
+            Log.i("conn","connectStatus:" + conn.getURL());
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 return getJsonFromConnection(conn);
             }
@@ -84,7 +88,6 @@ public class HttpConnectionUtil {
         try {
             String cookies = conn.getHeaderField("Set-Cookie");
             String token = StringUtils.substringBetween(cookies, "huangshizhetianxiadiyi=", ";");
-            System.out.println("xxxxxx"+token);
             if (StringUtils.isNotBlank(token)) {
                 CommenUtil.setCookie(token);
             }
@@ -99,9 +102,40 @@ public class HttpConnectionUtil {
             }
             bufferedReader.close();
             inputStream.close();
+            conn.disconnect();
             return result.toString();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            conn.disconnect();
+        }
+        return null;
+    }
+
+    public static Bitmap getImage(String url) {
+        HttpURLConnection conn = null;
+        try {
+            URL uri = new URL(url);
+            conn = (HttpURLConnection) uri.openConnection();
+            conn.setReadTimeout(2000);
+            conn.setConnectTimeout(2000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStream is = conn.getInputStream();
+                BitmapFactory.Options opts = new BitmapFactory.Options();
+                opts.inSampleSize = 6;
+                Bitmap bitmap = BitmapFactory.decodeStream(is, null, opts);
+                is.close();
+                return bitmap;
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            conn.disconnect();
         }
         return null;
     }

@@ -28,13 +28,16 @@ public class StartActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             String result = HttpConnectionUtil.getJsonResult(RequestEnum.AUTO_LOGIN, new HashMap<>());
-            System.out.println(result);
             if (result != null) {
                 try {
                     JsonNode jsonNode = CommenUtil.toJsonNode(result);
                     Integer status = jsonNode.get("status").asInt();
                     if (status == 0) {
                         Intent intent = new Intent(StartActivity.this, IndexActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Intent intent = new Intent(this, LoginActivity.class);
                         startActivity(intent);
                         finish();
                     }

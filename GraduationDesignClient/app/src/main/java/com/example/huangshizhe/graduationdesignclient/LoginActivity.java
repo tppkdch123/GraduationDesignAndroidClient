@@ -44,25 +44,25 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        email = (AutoCompleteTextView) findViewById(R.id.email);
+        email = findViewById(R.id.email);
 
-        password = (EditText) findViewById(R.id.password);
+        password = findViewById(R.id.password);
 
-        verification = (TextInputEditText) findViewById(R.id.verification);
+        verification = findViewById(R.id.verification);
 
-        passwordLayout = (TextInputLayout) findViewById(R.id.password_layout);
+        passwordLayout = findViewById(R.id.password_layout);
 
-        verLayout = (LinearLayout) findViewById(R.id.ver_layout);
+        verLayout = findViewById(R.id.ver_layout);
 
-        ((Button) findViewById(R.id.login)).setOnClickListener((v) -> new LoginByPassword().execute(true));
+        findViewById(R.id.login).setOnClickListener((v) -> new LoginByPassword().execute(true));
 
-        ((Button) findViewById(R.id.button3)).setOnClickListener((v) -> new LoginByPassword().execute(false));
+        findViewById(R.id.button3).setOnClickListener((v) -> new LoginByPassword().execute(false));
 
         email.setText(CommenUtil.getEmail(this));
 
         password.setText(CommenUtil.getPassword(this));
 
-        ((Button) findViewById(R.id.register)).setOnClickListener((v) -> {
+        findViewById(R.id.register).setOnClickListener((v) -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
             finish();
@@ -87,10 +87,10 @@ public class LoginActivity extends AppCompatActivity {
                     CommenUtil.savePassword(context, passwordText);
                     return HttpConnectionUtil.getJsonResult(RequestEnum.LOGIN_PASSWORD, params);
                 } else {
-                    Map<String,String> params=new HashMap<>();
-                    params.put("verificationCode",verificationText);
-                    params.put("email",emailText);
-                    return HttpConnectionUtil.getJsonResult(RequestEnum.LOGIN_VER,params);
+                    Map<String, String> params = new HashMap<>();
+                    params.put("verificationCode", verificationText);
+                    params.put("email", emailText);
+                    return HttpConnectionUtil.getJsonResult(RequestEnum.LOGIN_VER, params);
                 }
             } else {
                 String emailText = email.getText().toString();
@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             try {
-                if(StringUtils.isEmpty(result)){
+                if (StringUtils.isEmpty(result)) {
                     Toast.makeText(MyApplication.getContext(), "返回结果为空", Toast.LENGTH_LONG).show();
                     return;
                 }
