@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
 
 import com.example.huangshizhe.graduationdesignclient.IndexActivity;
@@ -43,6 +44,8 @@ public class IndexFragment extends Fragment {
     private GridView gridView;
 
     private RoomAdapter roomAdapter;
+
+    private AutoCompleteTextView autoCompleteTextView;
 
     private List<Room> rooms;
 

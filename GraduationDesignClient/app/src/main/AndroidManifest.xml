@@ -31,11 +31,6 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_start"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".ScrollingActivity"
@@ -45,7 +40,13 @@
             android:name=".Main2Activity"
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".IndexActivity" />
+        <activity android:name=".IndexActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".RoomActivity"></activity>
     </application>
 

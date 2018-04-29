@@ -36,6 +36,8 @@ public class RoomActivity extends AppCompatActivity {
 
     private TextView needKnow;
 
+    private TextView around;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +54,8 @@ public class RoomActivity extends AppCompatActivity {
         money=findViewById(R.id.money);
 
         needKnow=findViewById(R.id.need_know);
+
+        around=findViewById(R.id.around);
 
         new LoadPictures().execute(getIntent().getLongExtra("roomId",1107534));
 
@@ -123,6 +127,7 @@ public class RoomActivity extends AppCompatActivity {
             description.setText(roomWithBLOBs.getDescription());
             money.setText("￥"+roomWithBLOBs.getDefaultPrice()/100.0);
             needKnow.setText("todo");
+            around.setText(roomWithBLOBs.getAroundInfo());
         }
     }
 }

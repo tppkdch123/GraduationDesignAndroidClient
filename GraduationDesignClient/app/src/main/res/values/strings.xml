@@ -124,4 +124,10 @@
     <string name="title">title</string>
     <string name="desc">desc</string>
     <string name="test">测试</string>
+    <string name="around">周边介绍</string>
+    <string-array name="blank">
+        <item>我的钱包</item>
+        <item>我的红包</item>
+        <item>我也要当民宿房东</item>
+    </string-array>
 </resources>
